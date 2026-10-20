@@ -1,0 +1,8 @@
+# KHÔNG BAO GIỜ đưa dữ liệu doanh nghiệp lên mạng
+*.xlsx
+*.xls
+*.xlsm
+*.csv
+~$*
+# Chỉ dùng trên máy cục bộ
+Mo_Dashboard.bat

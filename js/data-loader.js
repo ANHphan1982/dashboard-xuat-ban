@@ -13,14 +13,14 @@
   const EMPTY = '(Trống)';
   // Quy tắc gán Hình thức vận chuyển cho ô trống (áp dụng theo thứ tự, quy tắc đầu tiên khớp được dùng)
   const HT_RULES = [
-    { id: 'road', value: 'Đường bộ', desc: 'Khối lượng < 50 M3/SM3', test: (r) => r.volOk && r.unit !== 'MT' && r.vol < 50 },
+    { id: 'road', value: 'Đường bộ', desc: 'Khối lượng < 50 M3/SM3', test: (r) => r.vol3 != null && r.vol3 < 50 },
     { id: 'pipe', value: 'Đường ống', desc: 'Phương tiện là "Pipeline" / "Pipe line"', test: (r) => fold(norm(r.raw.pt)).replace(/[\s\-_]/g, '') === 'pipeline' },
   ];
 
   /*
    * ĐỊNH DẠNG FILE ĐƯỢC HỖ TRỢ — tự nhận dạng theo dòng tiêu đề.
    * fields: trường bắt buộc (cột mặc định + tên tiêu đề có thể gặp)
-   * volume: 'text' = 1 cột dạng "7,001 (M3)"; 'byUnit' = mỗi đơn vị 1 cột số
+   * volume: 'text' = 1 cột dạng "7,001 (M3)"; 'column' = 1 cột số, mọi sản phẩm cùng 1 đơn vị
    * optional: trường phụ (số chứng từ để kiểm tra trùng, trạng thái để lọc)
    */
   const PROFILES = [
@@ -34,14 +34,12 @@
         pt:   { label: 'Phương tiện',          col: 'C',  aliases: ['phương tiện'] },
         sp:   { label: 'Sản phẩm',             col: 'K',  aliases: ['mô tả sản phẩm'] },
       },
-      // LPG, Propylene lấy cột AM (MT); các sản phẩm khác lấy cột AL, hiển thị đơn vị SM3
-      volume: { type: 'byUnit', cols: {
-        M3: { label: 'Khối lượng thực tế (SM3)', col: 'AL', aliases: ['quantity (sm3)'], unit: 'SM3' },
-        MT: { label: 'Khối lượng thực tế LPG, Propylene (MT)', col: 'AM', aliases: ['quantity (mt)'], unit: 'MT' },
-      } },
+      // Mọi sản phẩm lấy cột AM (MT) để đồng nhất đơn vị
+      volume: { type: 'column', col: { label: 'Khối lượng thực tế (MT)', col: 'AM', aliases: ['quantity (mt)'], unit: 'MT' } },
       optional: {
         so: { label: 'Số LXH trên SAP',      aliases: ['số lxh trên sap'] },
         tt: { label: 'Trạng thái giao hàng', aliases: ['shipment status desc.', 'shipment status desc'] },
+        sm3: { label: 'Quantity (SM3)',      aliases: ['quantity (sm3)'] }, // chỉ dùng cho quy tắc HTVC "Đường bộ"
       },
     },
     {
@@ -61,8 +59,7 @@
       },
     },
   ];
-  const volCols = (p) => (p.volume.type === 'text' ? { kl: p.volume.col } : Object.fromEntries(Object.entries(p.volume.cols).map(([u, c]) => ['kl_' + u, c])));
-  const requiredOf = (p) => ({ ...p.fields, ...volCols(p) });
+  const requiredOf = (p) => ({ ...p.fields, kl: p.volume.col });
 
   const norm = (v) => String(v == null ? '' : v).normalize('NFC').replace(/[\s ]+/g, ' ').trim();
   const normHeader = (v) => norm(v).toLowerCase();
@@ -222,7 +219,7 @@
       if (h) { chosen = { name, rows, headerIdx: h.idx, profile: h.profile, range }; break; }
     }
     if (!chosen) {
-      throw new StructureError('Không nhận dạng được dòng tiêu đề. File cần có các cột như "Loading date / Mô tả sản phẩm / Tên khách hàng / Quantity (SM3) / Quantity (MT)" (file EXPORT) hoặc "Ngày phiếu xuất kho / Sản phẩm / Khối lượng thực tế" (file PXK). Sheet có trong file: ' + wb.SheetNames.join(', '));
+      throw new StructureError('Không nhận dạng được dòng tiêu đề. File cần có các cột như "Loading date / Mô tả sản phẩm / Tên khách hàng / Quantity (MT)" (file EXPORT) hoặc "Ngày phiếu xuất kho / Sản phẩm / Khối lượng thực tế" (file PXK). Sheet có trong file: ' + wb.SheetNames.join(', '));
     }
 
     const { rows, headerIdx, range, profile } = chosen;
@@ -254,15 +251,9 @@
       // Dòng tổng cộng/ghi chú cuối bảng: không có ngày, khách hàng và sản phẩm → bỏ qua
       if (isEmpty(get('date')) && isEmpty(get('kh')) && isEmpty(get('sp'))) { summaryRows++; continue; }
       const raw = { kho: get('kho'), date: get('date'), kh: get('kh'), ht: get('ht'), pt: get('pt'), sp: get('sp'), so: get('so'), tt: get('tt') };
-      let volCol = null;
-      if (profile.volume.type === 'text') raw.kl = get('kl');
-      else {
-        // Cột khối lượng theo quy tắc: LPG, Propylene → cột MT; sản phẩm khác → cột thể tích
-        const u = expectedUnit(norm(raw.sp)) || 'M3';
-        volCol = 'kl_' + u;
-        raw.kl = get(volCol);
-        raw.klUnit = profile.volume.cols[u].unit || u;
-      }
+      raw.kl = get('kl');
+      const volCol = profile.volume.type === 'column';
+      if (volCol) raw.klUnit = profile.volume.col.unit;
       const rec = {
         id: records.length,
         row: range.s.r + i + 1, // số dòng trên Excel
@@ -274,7 +265,7 @@
         flags: {},
       };
       const vol = parseVolume(raw.kl);
-      if (volCol && !vol.unit) vol.unit = raw.klUnit; // file EXPORT: đơn vị xác định theo cột
+      if (volCol && !vol.unit) vol.unit = raw.klUnit; // file EXPORT: đơn vị xác định theo cột (MT)
       const exp = expectedUnit(rec.sp === EMPTY ? '' : rec.sp);
       rec.vol = vol.value;
       rec.unit = vol.unit;
@@ -287,6 +278,10 @@
       if (!rec.volOk) rec.vol = rec.flags.volError ? null : rec.vol;
       if (rec.day == null) rec.flags.dateError = (raw.date == null || raw.date === '') ? 'Thiếu ngày' : 'Ngày sai định dạng';
       if (rec.volOk && rec.vol < 0) rec.flags.negative = true;
+      // Khối lượng thể tích (M3/SM3) của sản phẩm không tính theo MT — dùng cho quy tắc HTVC "Đường bộ"
+      rec.vol3 = volCol
+        ? (exp !== 'MT' ? parseVolume(get('sm3')).value : null)
+        : (rec.volOk && rec.unit !== 'MT' ? rec.vol : null);
       // Quy tắc nghiệp vụ gán HTVC cho ô trống (giá trị gốc vẫn giữ trong raw.ht)
       if (rec.ht === EMPTY) {
         const rule = HT_RULES.find((x) => x.test(rec));
@@ -340,8 +335,8 @@
       maxDay: days.length ? Math.max(...days) : null,
       // Đơn vị thể tích trước, MT sau
       units: [...new Set(records.filter((r) => r.volOk).map((r) => r.unit))].sort((a, b) => (a === 'MT') - (b === 'MT') || a.localeCompare(b)),
-      unitRule: profile.volume.type === 'byUnit'
-        ? `LPG, Propylene = MT (cột ${profile.volume.cols.MT.col}); sản phẩm khác = ${profile.volume.cols.M3.unit} (cột ${profile.volume.cols.M3.col})`
+      unitRule: profile.volume.type === 'column'
+        ? `Tất cả sản phẩm = ${profile.volume.col.unit} (cột ${profile.volume.col.col})`
         : 'LPG, Propylene = MT; sản phẩm khác = M3',
       loadedAt: new Date(),
     };

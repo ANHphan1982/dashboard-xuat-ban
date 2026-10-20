@@ -769,8 +769,8 @@
     <li>Phiếu có tình trạng <b>"Đã xóa"</b> (file PXK) mặc định không được tính; muốn tính, tích chọn lại trong bộ lọc Tình trạng phiếu.</li>
     <li>Dòng có <b>khối lượng = 0</b> (lệnh chưa xuất) mặc định không được tính; bỏ chọn ô <b>Chỉ tính GD có KL &gt; 0</b> để tính.</li></ul>
     <h4>3. Đọc số liệu</h4>
-    <ul><li>Khối lượng luôn tách riêng theo đơn vị: <b>LPG và Propylene tính theo MT</b>, các sản phẩm khác theo <b>SM3</b> (file EXPORT) hoặc <b>M3</b> (file PXK); không cộng lẫn.</li>
-    <li>Nút <b>Đơn vị SM3 / MT</b> chọn đơn vị cho tất cả biểu đồ và bảng xếp hạng.</li>
+    <ul><li>File EXPORT: sản lượng <b>mọi sản phẩm lấy theo cột AM, đơn vị MT</b>. File PXK: LPG và Propylene theo <b>MT</b>, sản phẩm khác theo <b>M3</b>; không cộng lẫn.</li>
+    <li>Khi dữ liệu có nhiều đơn vị (file PXK), nút <b>Đơn vị M3 / MT</b> chọn đơn vị cho tất cả biểu đồ và bảng xếp hạng.</li>
     <li>Nhấn vào một cột, điểm, lát biểu đồ hoặc dòng xếp hạng để xem các giao dịch liên quan ở bảng chi tiết. Nhấn <b>Hiện toàn bộ</b> để quay lại.</li>
     <li>Mục <b>Kiểm tra dữ liệu</b> liệt kê dòng thiếu thông tin, trùng số phiếu, trùng nội dung… kèm nút <b>Xem</b>.</li></ul>
     <h4>4. Trích xuất báo cáo</h4>

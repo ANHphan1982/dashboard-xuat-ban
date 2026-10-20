@@ -51,8 +51,8 @@ Khoảng 1 phút sau link tự cập nhật. File `.gitignore` chặn mọi file
 | T | Hình thức vận chuyển | Hình thức vận chuyển |
 | C | Phương tiện | Phương tiện |
 | K | Mô tả sản phẩm | Sản phẩm |
-| AL | Quantity (SM3) | Khối lượng thực tế — **các sản phẩm khác** (đơn vị **SM3**) |
-| AM | Quantity (MT) | Khối lượng thực tế — **LPG và Propylene** (đơn vị **MT**) |
+| AM | Quantity (MT) | Khối lượng thực tế — **tất cả sản phẩm** (đơn vị **MT**) |
+| AL | Quantity (SM3) | Chỉ dùng cho quy tắc gán HTVC "Đường bộ" (KL < 50 SM3), không cộng vào sản lượng |
 | B | Số LXH trên SAP | Kiểm tra trùng (không bắt buộc) |
 | F | Shipment status Desc. | Bộ lọc "Trạng thái giao hàng" (không bắt buộc) |
 
@@ -76,7 +76,7 @@ Khoảng 1 phút sau link tự cập nhật. File `.gitignore` chặn mọi file
 
 ## 3. Quy tắc xử lý số liệu
 
-- **Đơn vị**: LPG tính theo **MT**, các sản phẩm khác tính theo **M3**. Đơn vị đọc từ ô khối lượng; nếu ô không ghi đơn vị thì suy theo quy tắc trên (và được cảnh báo). **Không bao giờ cộng M3 với MT.**
+- **Đơn vị**: file EXPORT — **tất cả sản phẩm tính theo MT (cột AM)**. File PXK — LPG tính theo **MT**, các sản phẩm khác tính theo **M3**. Đơn vị đọc từ ô khối lượng; nếu ô không ghi đơn vị thì suy theo quy tắc trên (và được cảnh báo). **Không bao giờ cộng M3 với MT.**
 - **Phiếu "Đã xóa"**: mặc định **không tính**. Muốn tính, mở bộ lọc *Tình trạng phiếu* và tích chọn "Đã xóa".
 - **Thiếu khối lượng**: vẫn đếm là giao dịch nhưng không cộng vào tổng (KPI ghi rõ số bản ghi bị loại).
 - **Thiếu ngày**: bị loại khi lọc theo thời gian.

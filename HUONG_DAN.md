@@ -2,6 +2,26 @@
 
 Dashboard dạng trang web chạy **hoàn toàn trên máy tính** (không cần cài đặt, không cần Internet, không gửi dữ liệu ra ngoài).
 
+## 0. Bản online — mở ở bất kỳ máy nào
+
+**Link: https://anhphan1982.github.io/dashboard-xuat-ban/**
+
+1. Mở link trên máy tính/máy tính bảng (Chrome, Edge, Cốc Cốc, Firefox, Safari).
+2. Nhấn **Chọn file Excel** → chọn file `EXPORT.xlsx` trên máy của bạn.
+3. File được xử lý **ngay trong trình duyệt**, không tải lên máy chủ. Trang online chỉ chứa mã nguồn, không chứa dữ liệu.
+4. Lần sau mở lại link trên cùng máy/trình duyệt, dữ liệu gần nhất tự hiện (lưu trong trình duyệt của máy đó). Có số liệu mới → nhấn **Chọn file Excel** chọn file mới.
+
+**Cập nhật bản online khi sửa mã nguồn** (không áp dụng cho dữ liệu — dữ liệu không bao giờ đưa lên):
+
+```
+cd "E:\Dashboard xuất bán sản phẩm"
+git add -A
+git commit -m "Mô tả thay đổi"
+git push
+```
+
+Khoảng 1 phút sau link tự cập nhật. File `.gitignore` chặn mọi file Excel (`*.xlsx`, `*.xls`…) nên không thể vô tình đưa dữ liệu lên.
+
 ## 1. Cách mở (khuyến nghị)
 
 1. Mở thư mục `E:\Dashboard xuất bán sản phẩm`.

@@ -386,7 +386,7 @@
     if (q.summaryRows) li('', `${fmtInt(q.summaryRows)} dòng tổng cộng/ghi chú cuối bảng (không có ngày, khách hàng, sản phẩm) — đã bỏ qua.`);
     if (q.zeroVol.length) li('', `<b>${fmtInt(q.zeroVol.length)}</b> dòng có khối lượng thực tế = 0 (lệnh đã lập, chưa xuất) — <b>mặc định không tính</b>; bỏ chọn "Chỉ tính GD có KL &gt; 0" để tính.${link('zeroVol', 1)}`);
     if (q.dupVoucher.length) li('', `<b>${fmtInt(q.dupVoucherGroups)}</b> ${esc(soLabel())} bị trùng (${fmtInt(q.dupVoucher.length)} dòng) — chưa loại bỏ, cần kiểm tra.${link('dupVoucher', 1)}`);
-    if (q.dupRow.length) li('', `<b>${fmtInt(q.dupRowGroups)}</b> nhóm dòng trùng toàn bộ ngày/kho/khách hàng/HTVC/phương tiện/sản phẩm/khối lượng (${fmtInt(q.dupRow.length)} dòng) — có thể là các chuyến hợp lệ, không tự xóa.${link('dupRow', 1)}`);
+    if (q.dupRow.length) li('', `<b>${fmtInt(q.dupRowGroups)}</b> nhóm dòng trùng toàn bộ ngày/kho/khách hàng/HTVC/phương tiện/sản phẩm/khối lượng và cùng ${esc(soLabel())} (${fmtInt(q.dupRow.length)} dòng) — vẫn tính đủ vào số liệu, cần kiểm tra có nhập trùng không. Các dòng giống nhau nhưng khác ${esc(soLabel())} là các chuyến riêng, không báo trùng.${link('dupRow', 1)}`);
     for (const rule of L.HT_RULES) {
       const n = q.htRule[rule.id].length;
       if (n) li('', `<b>${fmtInt(n)}</b> dòng trống Hình thức vận chuyển, ${esc(rule.desc.charAt(0).toLowerCase() + rule.desc.slice(1))} — <b>mặc định "${esc(rule.value)}"</b> theo quy tắc nghiệp vụ.${link('htRule_' + rule.id, 1)}`);

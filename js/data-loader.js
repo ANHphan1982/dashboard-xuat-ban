@@ -358,7 +358,8 @@
       return { ids, groups };
     };
     const dupVoucher = groupDup((r) => (r.so ? r.so : null));
-    const dupRow = groupDup((r) => [r.day, r.kho, r.kh, r.ht, r.pt, r.sp, norm(r.raw.kl)].join('|'));
+    // Có kèm số chứng từ: 1 xe nhận nhiều lần cùng ngày/sản phẩm/khối lượng nhưng khác số lệnh là các chuyến hợp lệ
+    const dupRow = groupDup((r) => [r.day, r.kho, r.kh, r.ht, r.pt, r.sp, norm(r.raw.kl), r.so].join('|'));
     for (const id of dupVoucher.ids) records[id].flags.dupVoucher = true;
     for (const id of dupRow.ids) records[id].flags.dupRow = true;
 

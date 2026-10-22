@@ -6,3 +6,4 @@
 ~$*
 # Chỉ dùng trên máy cục bộ
 Mo_Dashboard.bat
+node_modules/

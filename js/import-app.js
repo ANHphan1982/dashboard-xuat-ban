@@ -445,7 +445,8 @@
           tooltip: {
             mode: 'index', intersect: false, filter: (it) => it.raw > 0,
             callbacks: {
-              title: (its) => `Tháng ${months[its[0].dataIndex].label}`,
+              // filter bỏ hết mục = 0 → its rỗng ở tháng không có nhập; lỗi ở đây làm hỏng mọi lần cập nhật biểu đồ sau đó
+              title: (its) => (its.length ? `Tháng ${months[its[0].dataIndex].label}` : ''),
               label: (it) => ` ${it.dataset.label}: ${fmt(it.raw)} ${U}`,
               footer: (its) => its.length ? `Tổng: ${fmt(months[its[0].dataIndex].sum)} ${U} · ${fmtInt(months[its[0].dataIndex].count)} lần nhập` : '',
             },

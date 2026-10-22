@@ -98,7 +98,7 @@
   const pointer = (evt, els) => { evt.native && (evt.native.target.style.cursor = els.length ? 'pointer' : 'default'); };
 
   // -------------------------- 1. Xu hướng --------------------------
-  function trend(recs, unit, gran, onClick) {
+  function trend(recs, unit, gran, onClick, label) {
     const s = A().timeSeries(recs, gran, unit);
     setEmpty('chTrend', !s.some((p) => p.count));
     const granName = { day: 'Ngày', week: 'Tuần', month: 'Tháng' }[gran];
@@ -107,7 +107,7 @@
       data: {
         labels: s.map((p) => p.label),
         datasets: [{
-          label: `Khối lượng xuất (${unit})`, data: s.map((p) => p.sum),
+          label: label || `Khối lượng xuất (${unit})`, data: s.map((p) => p.sum),
           borderColor: PRIMARY, backgroundColor: PRIMARY_SOFT, fill: true, borderWidth: 2, tension: 0.25,
           pointRadius: s.length > 60 ? 0 : 3, pointHoverRadius: 6, pointBackgroundColor: PRIMARY, pointHitRadius: 10,
         }],
@@ -258,5 +258,5 @@
 
   function resizeAll() { for (const c of Object.values(charts)) c.resize(); }
 
-  PXK.charts = { setupDefaults, setColorRanks, colorFor, colorsFor, trend, bars, transportStacked, donut, resizeAll, fmt, fmtInt };
+  PXK.charts = { setupDefaults, setColorRanks, colorFor, colorsFor, trend, bars, transportStacked, donut, resizeAll, fmt, fmtInt, upsert, setEmpty, pointer, onPick, valueAxis, catAxis, OTHER };
 })(window);

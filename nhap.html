@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dashboard Nhập dầu thô/Nguyên liệu</title>
+  <link rel="stylesheet" href="css/style.css?v=20261022a">
+</head>
+<body>
+  <!-- ============================ HEADER ============================ -->
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="22" height="22"><path fill="currentColor" d="M12 2s-6 6.6-6 11a6 6 0 0012 0c0-4.4-6-11-6-11zm0 15a3 3 0 01-3-3h2a1 1 0 001 1z"/></svg>
+      </div>
+      <div>
+        <h1><select class="page-nav" aria-label="Chọn trang dashboard" title="Chọn trang dashboard">
+          <option value="index.html">Dashboard xuất bán sản phẩm</option>
+          <option value="nhap.html" selected>Dashboard nhập dầu thô/nguyên liệu</option>
+        </select></h1>
+        <div class="source" id="sourceInfo">Chưa nạp dữ liệu</div>
+      </div>
+    </div>
+    <div class="top-actions">
+      <button class="btn btn-light" id="btnOpen" title="Chọn file Excel nhập dầu thô/nguyên liệu (IMPORT.xlsx)">
+        <svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M10 4l2 2h8a2 2 0 012 2v10a2 2 0 01-2 2H4a2 2 0 01-2-2V6a2 2 0 012-2z"/></svg>
+        Chọn file Excel
+      </button>
+      <button class="btn btn-light" id="btnRefresh" title="Đọc lại file Excel đang dùng để cập nhật số liệu mới nhất">
+        <svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M17.65 6.35A8 8 0 1019.73 14h-2.08A6 6 0 1112 6a5.9 5.9 0 014.22 1.78L13 11h7V4z"/></svg>
+        Làm mới dữ liệu
+      </button>
+      <button class="btn btn-light" id="btnPrint" title="In hoặc lưu báo cáo dạng PDF">
+        <svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M19 8H5a3 3 0 00-3 3v6h4v4h12v-4h4v-6a3 3 0 00-3-3zm-3 11H8v-5h8zm3-7a1 1 0 110-2 1 1 0 010 2zM18 3H6v4h12z"/></svg>
+        In / PDF
+      </button>
+      <button class="btn btn-light" id="btnClearSaved" title="Xóa dữ liệu Excel nhập đã lưu trong trình duyệt">Xóa dữ liệu đã lưu</button>
+      <button class="btn btn-light" id="btnHelp" title="Hướng dẫn sử dụng">?</button>
+      <input type="file" id="fileInput" accept=".xlsx,.xls,.xlsm" hidden>
+    </div>
+  </header>
+
+  <!-- ============================ BỘ LỌC ============================ -->
+  <section class="filters" id="filterBar" aria-label="Bộ lọc">
+    <div class="filter-row">
+      <div class="f-item f-date">
+        <label for="fFrom">Từ ngày</label>
+        <div class="date-wrap"><input type="text" id="fFrom" placeholder="DD/MM/YYYY" inputmode="numeric" autocomplete="off" maxlength="10"><input type="date" class="dp" data-for="fFrom" tabindex="-1" aria-hidden="true"><button type="button" class="dp-btn" data-for="fFrom" title="Chọn ngày"><svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M7 2h2v2h6V2h2v2h3a1 1 0 011 1v15a1 1 0 01-1 1H4a1 1 0 01-1-1V5a1 1 0 011-1h3zm12 8H5v9h14z"/></svg></button></div>
+      </div>
+      <div class="f-item f-date">
+        <label for="fTo">Đến ngày</label>
+        <div class="date-wrap"><input type="text" id="fTo" placeholder="DD/MM/YYYY" inputmode="numeric" autocomplete="off" maxlength="10"><input type="date" class="dp" data-for="fTo" tabindex="-1" aria-hidden="true"><button type="button" class="dp-btn" data-for="fTo" title="Chọn ngày"><svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M7 2h2v2h6V2h2v2h3a1 1 0 011 1v15a1 1 0 01-1 1H4a1 1 0 01-1-1V5a1 1 0 011-1h3zm12 8H5v9h14z"/></svg></button></div>
+      </div>
+      <div class="f-item f-quick">
+        <label for="fQuick">Nhanh</label>
+        <select id="fQuick">
+          <option value="">— Chọn kỳ —</option>
+          <option value="all">Toàn bộ</option>
+          <option value="today">Ngày gần nhất có dữ liệu</option>
+          <option value="7d">7 ngày gần nhất</option>
+          <option value="30d">30 ngày gần nhất</option>
+          <option value="thisMonth">Tháng gần nhất</option>
+          <option value="prevMonth">Tháng trước đó</option>
+          <option value="thisQuarter">Quý gần nhất</option>
+          <option value="thisYear">Năm gần nhất</option>
+        </select>
+      </div>
+      <div class="f-item" data-ms="nhom"><label>Nhóm</label></div>
+      <div class="f-item" data-ms="sp"><label>Dầu thô/Nguyên liệu</label></div>
+      <div class="f-item f-btn">
+        <button class="btn btn-outline" id="btnReset" title="Xóa toàn bộ điều kiện lọc">Xóa bộ lọc</button>
+      </div>
+    </div>
+    <div class="applied" id="applied"></div>
+  </section>
+
+  <main id="main">
+    <!-- Màn hình chào khi chưa có dữ liệu -->
+    <section class="welcome" id="welcome">
+      <div class="drop" id="dropZone">
+        <svg viewBox="0 0 24 24" width="44" height="44" aria-hidden="true"><path fill="currentColor" d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8zm-1 7V3.5L18.5 9zM8 13h2l1 2 1-2h2l-2 3 2 3h-2l-1-2-1 2H8l2-3z"/></svg>
+        <h2>Nạp dữ liệu nhập dầu thô/nguyên liệu</h2>
+        <p>Kéo thả file <b>IMPORT.xlsx</b> vào đây, hoặc nhấn nút bên dưới.</p>
+        <div class="welcome-actions">
+          <button class="btn btn-primary" id="btnOpen2">Chọn file Excel</button>
+          <button class="btn btn-outline" id="btnReopen" hidden>Mở lại file gần nhất</button>
+        </div>
+        <p class="hint">File Excel chỉ được xử lý ngay trong trình duyệt trên máy của bạn, không tải lên máy chủ hay gửi đi đâu.</p>
+      </div>
+    </section>
+
+    <div id="dash" hidden>
+      <!-- Cảnh báo chất lượng dữ liệu -->
+      <section class="quality" id="quality"></section>
+
+      <!-- ============================ KPI ============================ -->
+      <section class="kpis" id="kpis" aria-label="Chỉ số tổng quan"></section>
+
+      <!-- ============================ XU HƯỚNG ============================ -->
+      <section class="grid g-1">
+        <article class="card">
+          <header class="card-h">
+            <div><h3>Khối lượng nhập theo thời gian</h3><p class="sub" id="trendSub"></p></div>
+            <div class="seg small" id="segGran" role="group" aria-label="Chu kỳ">
+              <button data-v="day">Ngày</button><button data-v="week">Tuần</button><button data-v="month">Tháng</button>
+            </div>
+          </header>
+          <div class="chart-box h-300"><canvas id="chTrend"></canvas></div>
+        </article>
+      </section>
+
+      <!-- ============================ CƠ CẤU ============================ -->
+      <section class="grid g-2">
+        <article class="card">
+          <header class="card-h"><div><h3>Khối lượng nhập theo dầu thô/nguyên liệu</h3><p class="sub unit-sub"></p></div></header>
+          <div class="chart-box h-340"><canvas id="chProduct"></canvas></div>
+        </article>
+        <article class="card">
+          <header class="card-h"><div><h3>Cơ cấu khối lượng nhập</h3><p class="sub unit-sub"></p></div></header>
+          <div class="chart-box h-340"><canvas id="chShare"></canvas></div>
+        </article>
+        <article class="card">
+          <header class="card-h"><div><h3>Khối lượng nhập theo tháng</h3><p class="sub">Xếp chồng theo dầu thô/nguyên liệu · Đơn vị: MT</p></div></header>
+          <div class="chart-box h-300"><canvas id="chMonthly"></canvas></div>
+        </article>
+        <article class="card">
+          <header class="card-h"><div><h3>Bảng xếp hạng dầu thô/nguyên liệu</h3><p class="sub">Theo khối lượng nhập · nhấn dòng để xem chi tiết</p></div></header>
+          <div class="rank-wrap"><table class="tbl rank" id="rankTable"></table></div>
+        </article>
+      </section>
+
+      <!-- ======================= BẢNG CHI TIẾT ======================= -->
+      <section class="card detail" id="detailCard">
+        <header class="card-h">
+          <div><h3>Tra cứu chi tiết các lần nhập</h3><p class="sub" id="detailSub"></p></div>
+          <div class="detail-tools">
+            <input type="search" id="search" placeholder="Tìm kiếm: nguyên liệu, số chứng từ, mã vật tư…" aria-label="Tìm kiếm">
+            <label class="inline">Số dòng
+              <select id="pageSize"><option>25</option><option selected>50</option><option>100</option><option>200</option></select>
+            </label>
+            <button class="btn btn-outline" id="btnClearTable" title="Bỏ chế độ xem chi tiết từ biểu đồ và ô tìm kiếm">Hiện toàn bộ</button>
+          </div>
+        </header>
+        <div class="drill" id="drillBar" hidden></div>
+        <div class="tbl-wrap"><table class="tbl" id="detailTable"></table></div>
+        <div class="tbl-foot">
+          <div id="tableTotals"></div>
+          <div class="pager" id="pager"></div>
+        </div>
+      </section>
+
+      <!-- ======================= TRÍCH XUẤT ======================= -->
+      <section class="card export">
+        <header class="card-h"><div><h3>Trích xuất báo cáo</h3><p class="sub">Tất cả file xuất đều theo bộ lọc đang áp dụng và kèm sheet "Điều kiện lọc".</p></div></header>
+        <div class="export-grid">
+          <button class="btn btn-export" data-exp="detail"><b>Chi tiết các lần nhập</b><span>Đúng các dòng trong bảng tra cứu (gồm tìm kiếm / xem chi tiết)</span></button>
+          <button class="btn btn-export" data-exp="product"><b>Tổng hợp theo dầu thô/nguyên liệu</b><span>Theo dầu thô/nguyên liệu; theo nhóm</span></button>
+          <button class="btn btn-export" data-exp="time"><b>Tổng hợp theo ngày / tháng</b><span>Theo ngày; theo tháng; tháng × nguyên liệu</span></button>
+          <button class="btn btn-export" data-exp="all"><b>Báo cáo tổng hợp đầy đủ</b><span>Tất cả bảng tổng hợp + chi tiết trong 1 file</span></button>
+          <button class="btn btn-export" data-exp="print"><b>In / Xuất PDF</b><span>Chọn máy in "Microsoft Print to PDF" hoặc "Lưu thành PDF"</span></button>
+        </div>
+      </section>
+      <footer class="foot" id="foot"></footer>
+    </div>
+  </main>
+
+  <!-- Hộp thoại -->
+  <div class="overlay" id="loading" hidden><div class="spinner"></div><div id="loadingText">Đang đọc file Excel…</div></div>
+  <div class="toast" id="toast" role="status" hidden></div>
+  <dialog id="dlg"><div class="dlg-body" id="dlgBody"></div><form method="dialog"><button class="btn btn-primary">Đóng</button></form></dialog>
+
+  <!-- Thư viện (lưu cục bộ, chạy offline) -->
+  <script src="lib/xlsx.full.min.js"></script>
+  <script src="lib/chart.umd.min.js"></script>
+  <!-- Dùng chung tiện ích của dashboard xuất bán; trang nhập có bộ đọc & giao diện riêng -->
+  <script src="js/data-loader.js?v=20261020d"></script>
+  <script src="js/analytics.js?v=20261020d"></script>
+  <script src="js/charts.js?v=20261022a"></script>
+  <script src="js/export.js?v=20261022a"></script>
+  <script src="js/storage.js?v=20261020d"></script>
+  <script src="js/import-loader.js?v=20261022a"></script>
+  <script src="js/import-app.js?v=20261022a"></script>
+  <script src="js/nav.js?v=20261022a"></script>
+</body>
+</html>

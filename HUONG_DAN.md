@@ -22,6 +22,21 @@ git push
 
 Khoảng 1 phút sau link tự cập nhật. File `.gitignore` chặn mọi file Excel (`*.xlsx`, `*.xls`…) nên không thể vô tình đưa dữ liệu lên.
 
+## Hai trang dashboard
+
+Nhấn vào **tiêu đề dashboard** (dropdown góc trên bên trái) để chuyển trang:
+
+- **Dashboard xuất bán sản phẩm** (`index.html`) — đọc file `EXPORT.xlsx`.
+- **Dashboard nhập dầu thô/nguyên liệu** (`nhap.html`) — đọc file `IMPORT.xlsx` (báo cáo nhập từ SAP):
+
+| Cột | Tiêu đề trong file | Trường trên dashboard |
+|---|---|---|
+| N | Posting Date | Ngày nhập |
+| D | Material Description | Dầu thô/Nguyên liệu |
+| I | Quantity | Số lượng (đơn vị **MT**) |
+
+  Nhóm **Dầu thô** = các loại có tên bắt đầu bằng "Dầu thô"; còn lại là **Nguyên liệu khác**. Dòng có đơn vị gốc (Base Unit of Measure) khác MT được cảnh báo và không cộng vào tổng. Đặt `IMPORT.xlsx` cùng thư mục với `EXPORT.xlsx`; khi mở bằng `Mo_Dashboard.bat`, trang nhập tự đọc file này.
+
 ## 1. Cách mở (khuyến nghị)
 
 1. Mở thư mục `E:\Dashboard xuất bán sản phẩm`.

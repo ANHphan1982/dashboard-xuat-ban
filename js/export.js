@@ -178,6 +178,8 @@
     },
     // dùng cho kiểm thử
     _summarySheet: summarySheet, _detailSheet: detailSheet,
+    // dùng chung cho trang nhập dầu thô/nguyên liệu
+    _sheet: sheet, _save: save,
   };
 
   PXK.exporter = exporter;

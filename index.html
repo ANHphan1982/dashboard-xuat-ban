@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Dashboard Xuất bán sản phẩm</title>
-  <link rel="stylesheet" href="css/style.css?v=20261020d">
+  <link rel="stylesheet" href="css/style.css?v=20261022a">
 </head>
 <body>
   <!-- ============================ HEADER ============================ -->
@@ -14,7 +14,10 @@
         <svg viewBox="0 0 24 24" width="22" height="22"><path fill="currentColor" d="M3 20h18v2H3zM5 10h3v8H5zm5.5-5h3v13h-3zM16 13h3v5h-3z"/></svg>
       </div>
       <div>
-        <h1>Dashboard xuất bán sản phẩm</h1>
+        <h1><select class="page-nav" aria-label="Chọn trang dashboard" title="Chọn trang dashboard">
+          <option value="index.html" selected>Dashboard xuất bán sản phẩm</option>
+          <option value="nhap.html">Dashboard nhập dầu thô/nguyên liệu</option>
+        </select></h1>
         <div class="source" id="sourceInfo">Chưa nạp dữ liệu</div>
       </div>
     </div>
@@ -211,9 +214,10 @@
   <!-- Mã nguồn dashboard: đọc dữ liệu → tính toán → biểu đồ → xuất báo cáo → giao diện -->
   <script src="js/data-loader.js?v=20261020d"></script>
   <script src="js/analytics.js?v=20261020d"></script>
-  <script src="js/charts.js?v=20261020d"></script>
-  <script src="js/export.js?v=20261020d"></script>
+  <script src="js/charts.js?v=20261022a"></script>
+  <script src="js/export.js?v=20261022a"></script>
   <script src="js/storage.js?v=20261020d"></script>
   <script src="js/app.js?v=20261020d"></script>
+  <script src="js/nav.js?v=20261022a"></script>
 </body>
 </html>

@@ -347,6 +347,10 @@
     const li = (cls, html) => { if (!cls) warnCount++; items.push(`<li${cls ? ` class="${cls}"` : ''}>${html}</li>`); };
     li('', `Đã đọc <b>${fmtInt(records.length)}</b> dòng từ sheet "${esc(m.sheet)}" (tiêu đề dòng ${m.headerRow}).`);
     if (q.summaryRows) li('', `${fmtInt(q.summaryRows)} dòng tổng cộng/ghi chú cuối bảng (không có ngày và nguyên liệu) — đã bỏ qua.`);
+    if (q.crudeDupRemoved.length) {
+      const rows = q.crudeDupRemoved.map((d) => `<li>Dòng ${d.row}: ${esc(d.sp)} — ${fmt2(+d.qty)} ${U}, ngày ${esc(d.dateStr)}${d.doc ? `, CT ${esc(d.doc)}` : ''} (trùng dòng ${d.keptRow})</li>`).join('');
+      li('', `Đã loại <b>${fmtInt(q.crudeDupRemoved.length)}</b> dòng dầu thô nhập trùng (cùng tên cột D và số lượng cột L, giữ dòng đầu tiên) — không tính vào tổng. <details><summary>Danh sách</summary><ul>${rows}</ul></details>`);
+    }
     if (q.dupDoc.length) li('', `<b>${fmtInt(q.dupDocGroups)}</b> cặp số chứng từ + dòng chứng từ bị trùng (${fmtInt(q.dupDoc.length)} dòng) — chưa loại bỏ, cần kiểm tra.${link('dupDoc')}`);
     if (q.dupRow.length) li('', `<b>${fmtInt(q.dupRowGroups)}</b> nhóm dòng trùng toàn bộ ngày/nguyên liệu/số lượng/chứng từ (${fmtInt(q.dupRow.length)} dòng) — vẫn tính đủ, cần kiểm tra có nhập trùng không.${link('dupRow')}`);
     if (q.missingSp.length) li('', `<b>${fmtInt(q.missingSp.length)}</b> dòng thiếu tên dầu thô/nguyên liệu.${link('missingSp')}`);

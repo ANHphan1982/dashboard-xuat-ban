@@ -1,6 +1,7 @@
 /* =====================================================================
  * import-loader.js — ĐỌC & CHUẨN HÓA FILE NHẬP DẦU THÔ / NGUYÊN LIỆU (IMPORT.xlsx, SAP)
  * - Tìm sheet và dòng tiêu đề, ánh xạ cột: Ngày nhập (N), Dầu thô/Nguyên liệu (D), Số lượng (I, MT).
+ * - Loại dòng dầu thô nhập trùng (cùng tên cột D + số lượng cột L), giữ dòng đầu tiên.
  * - Kiểm tra chất lượng dữ liệu (thiếu/sai ngày, số lượng, đơn vị, trùng chứng từ).
  * Dùng chung tiện ích ngày/số của data-loader.js. Giá trị gốc giữ trong record.raw.
  * ===================================================================== */
@@ -28,6 +29,7 @@
     mvt:  { label: 'Loại giao dịch',                  aliases: ['movement type text'] },
     po:   { label: 'Đơn mua hàng',                    aliases: ['purchase order'] },
     ncc:  { label: 'Nhà cung cấp',                    aliases: ['supplier'] },
+    qtyEntry: { label: 'Số lượng theo ĐV nhập (cột L)', aliases: ['qty in unit of entry'] },
   };
 
   /** Nhóm: tên bắt đầu bằng "Dầu thô" → Dầu thô; còn lại → Nguyên liệu khác */
@@ -154,7 +156,11 @@
       rec.search = L.fold([rec.dateStr, rec.sp, rec.nhom, rec.doc, rec.mat, rec.kho, rec.raw.kl].join(' | '));
     }
 
+    const crudeDup = dropCrudeDuplicates(records, map.qtyEntry >= 0);
+    if (map.qtyEntry < 0) notes.push(`Không thấy cột "${OPTIONAL.qtyEntry.aliases[0]}" (cột L) — chưa loại dòng dầu thô nhập trùng.`);
+
     const issues = checkQuality(records, variants);
+    issues.crudeDupRemoved = crudeDup;
     issues.blankRows = blank;
     issues.summaryRows = summaryRows;
 
@@ -173,6 +179,29 @@
       loadedAt: new Date(),
     };
     return { records, meta, issues };
+  }
+
+  /**
+   * Dầu thô bị nhập trùng trên SAP: cùng tên (cột D) và cùng số lượng theo ĐV nhập (cột L)
+   * → chỉ giữ dòng đầu tiên trong file. Nguyên liệu khác giữ nguyên.
+   * Sửa mảng records tại chỗ (đánh lại id) và trả về danh sách dòng đã loại.
+   */
+  function dropCrudeDuplicates(records, enabled) {
+    const removed = [];
+    if (!enabled) return removed;
+    const kept = new Map();
+    const out = records.filter((r) => {
+      const qty = norm(r.raw.qtyEntry);
+      if (r.nhom !== GROUPS[0] || !qty) return true;
+      const k = r.sp + '|' + qty;
+      const first = kept.get(k);
+      if (!first) { kept.set(k, r); return true; }
+      removed.push({ row: r.row, sp: r.sp, qty, dateStr: r.dateStr, doc: r.doc, keptRow: first.row });
+      return false;
+    });
+    records.length = 0;
+    out.forEach((r, i) => { r.id = i; records.push(r); });
+    return removed;
   }
 
   function checkQuality(records, variants) {

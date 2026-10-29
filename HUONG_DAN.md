@@ -35,7 +35,7 @@ Nhấn vào **tiêu đề dashboard** (dropdown góc trên bên trái) để chu
 | D | Material Description | Dầu thô/Nguyên liệu |
 | I | Quantity | Số lượng (đơn vị **MT**) |
 
-  Nhóm **Dầu thô** = các loại có tên bắt đầu bằng "Dầu thô"; còn lại là **Nguyên liệu khác**. Dòng có đơn vị gốc (Base Unit of Measure) khác MT được cảnh báo và không cộng vào tổng. Đặt `IMPORT.xlsx` cùng thư mục với `EXPORT.xlsx`; khi mở bằng `Mo_Dashboard.bat`, trang nhập tự đọc file này.
+  Nhóm **Dầu thô** = các loại có tên bắt đầu bằng "Dầu thô"; còn lại là **Nguyên liệu khác**. Dòng có đơn vị gốc (Base Unit of Measure) khác MT được cảnh báo và không cộng vào tổng. Riêng **Dầu thô** (Dầu thô trong nước, Dầu thô nhập khẩu): các dòng cùng tên (cột D) và cùng số lượng ở cột L (Qty in unit of entry) được coi là nhập trùng — chỉ giữ dòng đầu tiên, các dòng còn lại bị loại và liệt kê ở *Kiểm tra dữ liệu*. Nguyên liệu khác giữ nguyên. Đặt `IMPORT.xlsx` cùng thư mục với `EXPORT.xlsx`; khi mở bằng `Mo_Dashboard.bat`, trang nhập tự đọc file này.
 
 ## 1. Cách mở (khuyến nghị)
 
